@@ -41,7 +41,8 @@ Automated appointment booking system that captures patient requests from multipl
 
 ## Proof of Implementation
 
-![Workflow Diagram](https://raw.githubusercontent.com/Along44-cpu/rapha-hospital-appointment-automation/master/proof-of-implementation-1.png)
+<img width="1887" height="863" alt="new scrr1" src="https://github.com/user-attachments/assets/c83a0fd1-ebb6-4fcb-9468-a6cc5dc96005" />
+
 
 
 *Google Sheets audit trail with all appointment records*
@@ -49,6 +50,7 @@ Automated appointment booking system that captures patient requests from multipl
 ## Setup Instructions
 
 ### Prerequisites
+
 
 - n8n instance (self-hosted or cloud)
 - Google Sheets API credentials

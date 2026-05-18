@@ -43,9 +43,6 @@ Automated appointment booking system that captures patient requests from multipl
 
 ![Workflow Diagram](https://raw.githubusercontent.com/Along44-cpu/rapha-hospital-appointment-automation/master/proof-of-implementation-1.png)
 
-*Appointment confirmation email sent to hospital staff*
-
-![Email Notification](https://raw.githubusercontent.com/Along44-cpu/rapha-hospital-appointment-automation/master/proof-of-implementation-2.png)
 
 *Google Sheets audit trail with all appointment records*
 

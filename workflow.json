@@ -1,0 +1,230 @@
+{
+  "name": "Rapha Hospital - Appointments",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9c3c3ccd-2eb4-46aa-be71-20d149305b71",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -576,
+        -368
+      ],
+      "id": "d86209f4-a98c-4652-a08d-e50daa827655",
+      "name": "Webhook",
+      "webhookId": "9c3c3ccd-2eb4-46aa-be71-20d149305b71"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─────────────────────────────────────────────\n// RAPHA HOSPITAL — Appointment Booking\n// Code Node v3.0 | Production\n// Handles: Tally form + Website form\n// ─────────────────────────────────────────────\n\nconst body = $json.body;\n\n// Detect source — website sends flat JSON, Tally sends nested fields\nconst isWebsite = body.source === 'website';\n\n// ── Tally extractors ──────────────────────────\nconst fields = isWebsite ? null : body.data.fields;\n\nfunction getText(index) {\n  try {\n    const val = fields[index].value;\n    return val !== undefined && val !== null && String(val).trim() !== ''\n      ? String(val).trim() : 'Not provided';\n  } catch (e) { return 'Not provided'; }\n}\n\nfunction getDropdown(index) {\n  try {\n    const field = fields[index];\n    const selectedId = field.value[0];\n    const match = field.options.find(opt => opt.id === selectedId);\n    return match ? match.text.trim() : 'Not provided';\n  } catch (e) { return 'Not provided'; }\n}\n\n// ── Website extractors ────────────────────────\nfunction getWebsite(key) {\n  try {\n    const val = body[key];\n    return val !== undefined && val !== null && String(val).trim() !== ''\n      ? String(val).trim() : 'Not provided';\n  } catch (e) { return 'Not provided'; }\n}\n\n// ── Timestamp ─────────────────────────────────\nconst now = new Date();\nconst timestamp = now.toLocaleString('en-IN', {\n  timeZone: 'Asia/Kolkata',\n  day: '2-digit', month: '2-digit', year: 'numeric',\n  hour: '2-digit', minute: '2-digit', hour12: true\n});\n\n// ── Extract fields based on source ────────────\nconst patientName    = isWebsite ? getWebsite('patientName')    : getText(0);\nconst phoneNumber    = isWebsite ? getWebsite('phoneNumber')    : getText(1);\nconst age            = isWebsite ? getWebsite('age')            : getText(2);\nconst gender         = isWebsite ? getWebsite('gender')         : getDropdown(3);\nconst reasonForVisit = isWebsite ? getWebsite('reasonForVisit') : getDropdown(4);\nconst preferredTime  = isWebsite ? getWebsite('preferredTime')  : getDropdown(5);\nconst source         = isWebsite ? 'Website' : 'Tally Form';\n\n// ── Return clean output ───────────────────────\nreturn {\n  timestamp,\n  patientName,\n  phoneNumber,\n  age,\n  gender,\n  reasonForVisit,\n  preferredTime,\n  source,\n  status: 'Pending'\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -176
+      ],
+      "id": "dcfd36ff-ba71-44e7-9eae-93ea4591544b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pZTPfx3DL8jM63OjYOSrK4X95b-my2yWfZziyrF-6Zo",
+          "mode": "list",
+          "cachedResultName": "Rapha Hospital - Appointments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZTPfx3DL8jM63OjYOSrK4X95b-my2yWfZziyrF-6Zo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pZTPfx3DL8jM63OjYOSrK4X95b-my2yWfZziyrF-6Zo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.timestamp }}",
+            "Full Name": "={{ $json.patientName }}",
+            "Phone ": "={{ $json.phoneNumber }}",
+            "Age": "={{ $json.age }}",
+            "Gender": "={{ $json.gender }}",
+            "Reason for visit": "={{ $json.reasonForVisit }}",
+            "Time": "={{ $json.preferredTime }}",
+            "Status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Gender",
+              "displayName": "Gender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone ",
+              "displayName": "Phone ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason for visit",
+              "displayName": "Reason for visit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        -352
+      ],
+      "id": "4f4a54ec-46e1-4436-bf2a-3b1550b2d532",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dLTnsA2HEFLokbGH",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "alongdecor@gmail.com",
+        "subject": "=New Appointment — \n{{ $json['Full Name'] }}\n{{ $json.Time }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;\">\n  \n  <div style=\"background-color: #028090; padding: 20px 24px;\">\n    <h2 style=\"color: #ffffff; margin: 0; font-size: 20px;\">New Appointment Booking</h2>\n    <p style=\"color: #d0f0f4; margin: 4px 0 0; font-size: 13px;\">Rapha Hospital — Mon Town, Nagaland</p>\n  </div>\n\n  <div style=\"padding: 24px; background-color: #f9f9f9;\">\n    <table style=\"width: 100%; border-collapse: collapse;\">\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; width: 40%; border-bottom: 1px solid #eee;\"><strong>Patient Name</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json['Full Name'] }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;\"><strong>Phone Number</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json['Phone '] }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;\"><strong>Age</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json.Age }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;\"><strong>Gender</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json.Gender }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;\"><strong>Reason for Visit</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json['Reason for visit'] }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666; border-bottom: 1px solid #eee;\"><strong>Preferred Time</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a; border-bottom: 1px solid #eee;\">{{ $json.Time }}</td>\n      </tr>\n      <tr>\n        <td style=\"padding: 10px 12px; font-size: 13px; color: #666;\"><strong>Booked At</strong></td>\n        <td style=\"padding: 10px 12px; font-size: 14px; color: #1a1a1a;\">{{ $json.Timestamp }}</td>\n      </tr>\n    </table>\n  </div>\n\n  <div style=\"background-color: #028090; padding: 14px 24px; text-align: center;\">\n    <p style=\"color: #d0f0f4; font-size: 12px; margin: 0;\">Please call the patient to confirm their appointment slot.</p>\n  </div>\n\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        -192
+      ],
+      "id": "44f67ae5-f8c5-4462-931e-7644a8fff1be",
+      "name": "Send a message",
+      "webhookId": "b3747cc8-3cea-4773-bb37-67fc5393165f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "DA76uBOeUGu1IeiQ",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ea367df7-0a3a-4257-8382-5f496f7c3cf3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8458b278f35972b663f5f3c6b601a9e53f15bb7f4ad8be541e70ac3cc00748b4"
+  },
+  "id": "lPOfI3BznvQYtKUA",
+  "tags": []
+}
